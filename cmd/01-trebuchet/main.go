@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	file, err := os.Open("./data/01-sample")
+	file, err := os.Open("./data/01-pt1")
 	if err != nil {
 		log.Fatal(err)
 	}
