@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"slices"
+	"strconv"
 )
 
 var stringsToDigits = map[string]string{
@@ -18,6 +20,15 @@ var stringsToDigits = map[string]string{
 	"seven": "7",
 	"eight": "8",
 	"nine":  "9",
+	"1":     "1",
+	"2":     "2",
+	"3":     "3",
+	"4":     "4",
+	"5":     "5",
+	"6":     "6",
+	"7":     "7",
+	"8":     "8",
+	"9":     "9",
 }
 
 var numStrings = []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
@@ -37,17 +48,31 @@ func getFirstAndLastNumbersFromLine(currentLine string) int {
 			matchedNumbers[match[0]] = s
 		}
 	}
-	// store it in a map of map[int]string where int is the index of the number
 	// then at the end, get the keys of the map, sort them
+	indexKeys := make([]int, len(matchedNumbers))
+	i := 0
+	for k := range matchedNumbers {
+		indexKeys[i] = k
+		i++
+	}
+	slices.Sort(indexKeys)
 	// get the values of those keys from the map
+	firstDigit := stringsToDigits[matchedNumbers[indexKeys[0]]]
+	secondDigit := stringsToDigits[matchedNumbers[indexKeys[len(indexKeys)-1]]]
+
 	// put them together with concatenation
+	twoDigitString := fmt.Sprint(string(firstDigit), string(secondDigit))
+	twoDigitNumber, err := strconv.Atoi(twoDigitString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// return the number
-	fmt.Print(matchedNumbers)
-	return 0
+	return twoDigitNumber
 }
 
 func main() {
-	file, err := os.Open("data/01-sample")
+	file, err := os.Open("data/01-pt2-sample")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,44 +84,6 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		number := getFirstAndLastNumbersFromLine(line)
-
-		// // read each character and check if it's a number
-		// for {
-		// 	char, _, err := reader.ReadRune()
-		// 	if err != nil {
-		// 		if err == io.EOF {
-		// 			break
-		// 		} else {
-		// 			log.Fatal(err)
-		// 		}
-		// 	}
-		// 	if unicode.IsDigit(char) {
-		// 		if !isFirstSet {
-		// 			firstNumChar = char
-		// 			isFirstSet = true
-		// 		}
-		// 		lastNumChar = char
-		// 		break
-		// 	}
-		// 	// naive implementation is to keep previous letter?
-		// 	// nah, we should do like lookahead
-		// 	// one
-		// 	// two
-		// 	// three
-		// 	// four
-		// 	// five
-		// 	// six
-		// 	// seven
-		// 	// eight
-		// 	// nine
-		// 	// ten
-		// }
-		// // TODO: convert word numbers to regular numbers
-		// numberString := fmt.Sprint(string(firstNumChar), string(lastNumChar))
-		// number, err := strconv.Atoi(numberString)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
 		numbers = append(numbers, number)
 	}
 
